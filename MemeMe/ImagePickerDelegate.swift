@@ -12,10 +12,10 @@ import UIKit
 class ImagePickerDelegate: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     // MARK: Properties
-    let hostingViewController: ViewController
+    let viewControllerHostingImage: ViewController
     
-    init(viewController vc: ViewController) {
-        self.hostingViewController = vc
+    init(imageHost vc: ViewController) {
+        self.viewControllerHostingImage = vc
     }
     
     // MARK: Delegate Functions
@@ -29,8 +29,8 @@ class ImagePickerDelegate: NSObject, UINavigationControllerDelegate, UIImagePick
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         if let image = info[.originalImage] as? UIImage {
-            hostingViewController.memeModel = MemeModel(image: image)
-            hostingViewController.loadMeme()
+            viewControllerHostingImage.memeModel = MemeModel(image: image)
+            viewControllerHostingImage.loadMeme()
         }
         
         // dismiss the picker modal view

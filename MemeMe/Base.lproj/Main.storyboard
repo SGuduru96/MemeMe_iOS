@@ -24,13 +24,13 @@
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1qS-d3-Ffy">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="375"/>
                                     </imageView>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="TOP" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UvJ-y6-fyc">
+                                    <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="TOP" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UvJ-y6-fyc">
                                         <rect key="frame" x="154" y="20" width="67" height="48"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="40"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" autocorrectionType="yes" returnKeyType="done"/>
                                     </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="BOTTOM" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="f4l-GZ-ycj">
+                                    <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="BOTTOM" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="f4l-GZ-ycj">
                                         <rect key="frame" x="118" y="307" width="139" height="48"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="40"/>
@@ -57,7 +57,12 @@
                                 <items>
                                     <barButtonItem title="Pick" id="OAG-2v-M7A">
                                         <connections>
-                                            <action selector="pickAnImage:" destination="BYZ-38-t0r" id="5Va-8q-VQ0"/>
+                                            <action selector="pickAnImage:" destination="BYZ-38-t0r" id="ZeN-Ug-PTu"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="Camera" id="iUP-KS-T4a">
+                                        <connections>
+                                            <action selector="pickAnImage:" destination="BYZ-38-t0r" id="BQJ-0c-Pqz"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>

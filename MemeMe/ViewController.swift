@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var pickImageItemBarButton: UIBarButtonItem!
     
     var memeModel: MemeModel! = nil
-    lazy var imagePickerDelegate: ImagePickerDelegate = ImagePickerDelegate(viewController: self)
+    lazy var imagePickerDelegate: ImagePickerDelegate = ImagePickerDelegate(imageHost: self)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,16 +31,22 @@ class ViewController: UIViewController {
         imageView.image = memeModel.image
         topTextField.text = "TOP"
         bottomTextField.text = "BOTTOM"
+        
+        topTextField.isEnabled = true
+        bottomTextField.isEnabled = true
     }
     
-    @IBAction func pickAnImage(_ sender: Any) {
+    @IBAction func pickAnImage(_ sender: UIBarButtonItem) {
         let imagePicker = UIImagePickerController()
         // set imagePicker properties
         imagePicker.delegate = imagePickerDelegate
         imagePicker.allowsEditing = false
         
-        // set the source as photo library
-        imagePicker.sourceType = .photoLibrary
+        // set the source based on which bar button was pressed
+        imagePicker.sourceType = .camera // camera type by default
+        if sender.title! == "Pick" {
+            imagePicker.sourceType = .photoLibrary
+        }
         
         // check if public.image is an available mediaType
         if let _ = UIImagePickerController.availableMediaTypes(for: imagePicker.sourceType)?.contains("public.image") {
