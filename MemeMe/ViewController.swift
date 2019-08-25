@@ -18,12 +18,22 @@ class ViewController: UIViewController {
     
     var memeModel: MemeModel! = nil
     lazy var imagePickerDelegate: ImagePickerDelegate = ImagePickerDelegate(imageHost: self)
+    let textFieldAttributes: [NSAttributedString.Key: Any] = [
+        NSAttributedString.Key.strokeColor: UIColor.black,
+        NSAttributedString.Key.foregroundColor: UIColor.white,
+        NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
+        NSAttributedString.Key.strokeWidth:  -7.0
+    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        topTextField.defaultTextAttributes = textFieldAttributes
+        bottomTextField.defaultTextAttributes = textFieldAttributes
+        
         topTextField.text = ""
         bottomTextField.text = ""
+        
         pickImageItemBarButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
     }
     
