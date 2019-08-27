@@ -11,10 +11,14 @@ import UIKit
 class ViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate {
     
     // MARK: Outlets
+    // Meme Views
     @IBOutlet weak var memeView: UIView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var bottomTextField: UITextField!
+    
+    // Interface Buttons
+    @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var pickItemBarButton: UIBarButtonItem!
     @IBOutlet weak var cameraItemBarButton: UIBarButtonItem!
     
@@ -25,6 +29,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     enum Buttons: Int {
         case Album
         case Camera
+        case Share
     }
     
     // MARK: View Controller Methods
@@ -53,15 +58,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         // Set text to empty
         topTextField.text = ""
         bottomTextField.text = ""
-        
-        // Enable picker buttons based on source type availability
-        pickItemBarButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
-        cameraItemBarButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         subscribeToKeyboardNotification()
+        
+        // Enable picker buttons based on source type availability
+        pickItemBarButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
+        cameraItemBarButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -79,6 +84,25 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         // Enable editing for text fields
         topTextField.isEnabled = true
         bottomTextField.isEnabled = true
+        
+        // Enable and show the cancel button
+        cancelButton.isEnabled = true
+        cancelButton.isHidden = false
+    }
+    
+    func unloadMeme() {
+        // Set memeView subview contnts to nil
+        imageView.image = nil
+        topTextField.text = ""
+        bottomTextField.text = ""
+        
+        // Disable editing for text fields
+        topTextField.isEnabled = false
+        bottomTextField.isEnabled = false
+        
+        // Hide the cancel button and share button and disable
+        cancelButton.isHidden = true
+        cancelButton.isEnabled = false
     }
     
     func subscribeToKeyboardNotification() {
@@ -120,9 +144,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         imagePicker.allowsEditing = false
         
         // set the source based on which bar button was pressed
-        imagePicker.sourceType = .camera // camera type by default
-        if sender.tag == Buttons.Album.rawValue {
-            imagePicker.sourceType = .photoLibrary
+        imagePicker.sourceType = .photoLibrary // camera type by default
+        if sender.tag == Buttons.Camera.rawValue {
+            imagePicker.sourceType = .camera
         }
         
         // check if public.image is an available mediaType
@@ -137,14 +161,18 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     // When the memeView is pinched, toggle between aspectfit and aspectfill for imageView's content mode
     @IBAction func adjustImageContentMode(_ sender: UIPinchGestureRecognizer) {
         if sender.state == .ended {
-            // zoom out
             if sender.scale < 1 {
+                // zoom out
                 imageView.contentMode = .scaleAspectFit
             } else if sender.scale > 1 {
+                // zoom in
                 imageView.contentMode = .scaleAspectFill
             }
         }
-//        sender.view?.contentMode
+    }
+    
+    @IBAction func cancelMeme(_ sender: UIButton) {
+        unloadMeme()
     }
     
     // MARK: Delegate Functions
