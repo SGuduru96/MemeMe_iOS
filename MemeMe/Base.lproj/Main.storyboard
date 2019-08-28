@@ -128,6 +128,7 @@
                         <outlet property="imageView" destination="1qS-d3-Ffy" id="S9G-ok-5yU"/>
                         <outlet property="memeView" destination="Bvk-FO-KI9" id="WSf-N4-otg"/>
                         <outlet property="pickItemBarButton" destination="OAG-2v-M7A" id="hiJ-Dd-jwb"/>
+                        <outlet property="shareButton" destination="ROk-Ix-tVY" id="Zb8-Cy-TQF"/>
                         <outlet property="topTextField" destination="UvJ-y6-fyc" id="2De-9j-Sqk"/>
                     </connections>
                 </viewController>

@@ -21,11 +21,14 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var pickItemBarButton: UIBarButtonItem!
     @IBOutlet weak var cameraItemBarButton: UIBarButtonItem!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
+    
     
     // MARK: Properties
     var memeModel: MemeModel! = nil
     var textFieldAttributes = [NSAttributedString.Key: Any]()
     var photoTaken: Bool = false
+    var editorState: MemeEditorState = .WaitingForImage
     enum Buttons: Int {
         case Album
         case Camera
@@ -55,9 +58,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         topTextField.delegate = self
         bottomTextField.delegate = self
         
-        // Set text to empty
-        topTextField.text = ""
-        bottomTextField.text = ""
+        // set state and update subviews
+        editorState = .WaitingForImage
+        updateSubViews()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,40 +78,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     // MARK: Methods
-    func loadMeme() {
-        // Set memeView subview contents
-        imageView.image = memeModel.originalImage
-        topTextField.text = "TOP"
-        bottomTextField.text = "BOTTOM"
-        
-        // Show textfields and enable editing
-        topTextField.isHidden = false
-        topTextField.isEnabled = true
-        bottomTextField.isHidden = false
-        bottomTextField.isEnabled = true
-        
-        // Enable and show the cancel button
-        cancelButton.isEnabled = true
-        cancelButton.isHidden = false
-    }
-    
-    func unloadMeme() {
-        // Set memeView subview contnts to nil
-        imageView.image = nil
-        topTextField.text = nil
-        bottomTextField.text = nil
-        
-        // Hide textfields and disable editing
-        topTextField.isHidden = true
-        topTextField.isEnabled = false
-        bottomTextField.isHidden = true
-        bottomTextField.isEnabled = false
-        
-        // Hide the cancel button and share button and disable
-        cancelButton.isHidden = true
-        cancelButton.isEnabled = false
-    }
-    
     func saveMemedImage() {
         UIGraphicsBeginImageContextWithOptions(memeView.bounds.size, false, 0)
         memeView.drawHierarchy(in: memeView.bounds, afterScreenUpdates: true)
@@ -187,7 +156,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     @IBAction func cancelMeme(_ sender: UIButton) {
-        unloadMeme()
+        editorState = .WaitingForImage
+        updateSubViews()
     }
     
     @IBAction func saveMeme(_ sender: UIBarButtonItem) {
@@ -214,7 +184,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
             memeModel = MemeModel(image: image)
-            loadMeme()
+            editorState = .EditingImage
+            updateSubViews()
         }
         
         // dismiss the picker modal view
@@ -242,6 +213,51 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+// MARK: State Management
+extension ViewController {
+    enum MemeEditorState {
+        case EditingImage
+        case WaitingForImage
+    }
+    
+    func updateSubViews() {
+        switch editorState {
+        case .EditingImage:
+            // Set memeView subview contents
+            imageView.image = memeModel.originalImage
+            topTextField.text = "TOP"
+            bottomTextField.text = "BOTTOM"
+            
+            // Show textfields and enable editing
+            topTextField.isHidden = false
+            bottomTextField.isHidden = false
+            topTextField.isEnabled = true
+            bottomTextField.isEnabled = true
+            
+            // Enable and show the cancel button
+            cancelButton.isEnabled = true
+            cancelButton.isHidden = false
+            shareButton.isEnabled = true
+        case .WaitingForImage:
+            // Set memeView subview contnts to nil
+            imageView.image = nil
+            topTextField.text = nil
+            bottomTextField.text = nil
+            
+            // Hide textfields and disable editing
+            topTextField.isHidden = true
+            bottomTextField.isHidden = true
+            topTextField.isEnabled = false
+            bottomTextField.isEnabled = false
+            
+            // Hide the cancel button and share button and disable
+            cancelButton.isHidden = true
+            cancelButton.isEnabled = false
+            shareButton.isEnabled = false
+        }
     }
 }
 

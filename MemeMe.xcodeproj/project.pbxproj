@@ -14,7 +14,6 @@
 		A3B1AD4E231226C5006F4758 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3B1AD4D231226C5006F4758 /* Assets.xcassets */; };
 		A3B1AD51231226C5006F4758 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3B1AD4F231226C5006F4758 /* LaunchScreen.storyboard */; };
 		A3B1AD592312282F006F4758 /* MemeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B1AD582312282F006F4758 /* MemeModel.swift */; };
-		A3B1AD5D2312F6D0006F4758 /* ImagePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B1AD5C2312F6D0006F4758 /* ImagePickerDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +26,6 @@
 		A3B1AD50231226C5006F4758 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A3B1AD52231226C5006F4758 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A3B1AD582312282F006F4758 /* MemeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemeModel.swift; sourceTree = "<group>"; };
-		A3B1AD5C2312F6D0006F4758 /* ImagePickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,7 +62,6 @@
 				A3B1AD48231226C4006F4758 /* ViewController.swift */,
 				A3B1AD582312282F006F4758 /* MemeModel.swift */,
 				A3B1AD4A231226C4006F4758 /* Main.storyboard */,
-				A3B1AD5C2312F6D0006F4758 /* ImagePickerDelegate.swift */,
 				A309B84B23137FAF009B0101 /* MemeTextFieldDelegate.swift */,
 				A3B1AD4D231226C5006F4758 /* Assets.xcassets */,
 				A3B1AD4F231226C5006F4758 /* LaunchScreen.storyboard */,
@@ -144,7 +141,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A3B1AD5D2312F6D0006F4758 /* ImagePickerDelegate.swift in Sources */,
 				A3B1AD49231226C4006F4758 /* ViewController.swift in Sources */,
 				A309B84C23137FAF009B0101 /* MemeTextFieldDelegate.swift in Sources */,
 				A3B1AD592312282F006F4758 /* MemeModel.swift in Sources */,
