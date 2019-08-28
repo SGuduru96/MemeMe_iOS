@@ -25,7 +25,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     // MARK: Properties
     var memeModel: MemeModel! = nil
     var textFieldAttributes = [NSAttributedString.Key: Any]()
-    
+    var photoTaken: Bool = false
     enum Buttons: Int {
         case Album
         case Camera
@@ -77,12 +77,14 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     // MARK: Methods
     func loadMeme() {
         // Set memeView subview contents
-        imageView.image = memeModel.image
+        imageView.image = memeModel.originalImage
         topTextField.text = "TOP"
         bottomTextField.text = "BOTTOM"
         
-        // Enable editing for text fields
+        // Show textfields and enable editing
+        topTextField.isHidden = false
         topTextField.isEnabled = true
+        bottomTextField.isHidden = false
         bottomTextField.isEnabled = true
         
         // Enable and show the cancel button
@@ -93,11 +95,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     func unloadMeme() {
         // Set memeView subview contnts to nil
         imageView.image = nil
-        topTextField.text = ""
-        bottomTextField.text = ""
+        topTextField.text = nil
+        bottomTextField.text = nil
         
-        // Disable editing for text fields
+        // Hide textfields and disable editing
+        topTextField.isHidden = true
         topTextField.isEnabled = false
+        bottomTextField.isHidden = true
         bottomTextField.isEnabled = false
         
         // Hide the cancel button and share button and disable
@@ -105,6 +109,21 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         cancelButton.isEnabled = false
     }
     
+    func saveMemedImage() {
+        UIGraphicsBeginImageContextWithOptions(memeView.bounds.size, false, 0)
+        memeView.drawHierarchy(in: memeView.bounds, afterScreenUpdates: true)
+        memeModel.memedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+    }
+    
+    // MARK: Notification Methods
+    func getKeyboardHeight(_ notification:Notification) -> CGFloat {
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue // of CGRect
+        return keyboardSize.cgRectValue.height
+    }
+    
+    // MARK: Notification
     func subscribeToKeyboardNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -113,12 +132,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     func unsubscribeToKeyboardNotification() {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    func getKeyboardHeight(_ notification:Notification) -> CGFloat {
-        let userInfo = notification.userInfo
-        let keyboardSize = userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue // of CGRect
-        return keyboardSize.cgRectValue.height
     }
     
     // MARK: Callback
@@ -145,8 +158,10 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         
         // set the source based on which bar button was pressed
         imagePicker.sourceType = .photoLibrary // camera type by default
+        photoTaken = false
         if sender.tag == Buttons.Camera.rawValue {
             imagePicker.sourceType = .camera
+            photoTaken = true
         }
         
         // check if public.image is an available mediaType
@@ -173,6 +188,20 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     
     @IBAction func cancelMeme(_ sender: UIButton) {
         unloadMeme()
+    }
+    
+    @IBAction func saveMeme(_ sender: UIBarButtonItem) {
+        saveMemedImage()
+        
+        // open action sheet
+        var activityView: UIActivityViewController?
+        if photoTaken {
+            activityView = UIActivityViewController(activityItems: [memeModel.originalImage, memeModel.memedImage!], applicationActivities: nil)
+        } else {
+            activityView = UIActivityViewController(activityItems: [memeModel.memedImage!], applicationActivities: nil)
+        }
+        
+        present(activityView!, animated: true, completion: nil)
     }
     
     // MARK: Delegate Functions

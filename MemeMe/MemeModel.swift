@@ -12,11 +12,12 @@ import UIKit
 struct MemeModel {
     var topText: String?
     var bottomText: String?
-    var image: UIImage
+    var originalImage: UIImage
+    var memedImage: UIImage?
     
     // default init with image only required
     init(image: UIImage, topText: String? = nil, bottomText: String? = nil) {
-        self.image = image
+        self.originalImage = image
         self.topText = topText
         self.bottomText = bottomText
     }
