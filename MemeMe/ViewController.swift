@@ -60,7 +60,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         
         // set state and update subviews
         editorState = .WaitingForImage
-        updateSubViews()
+        updateViewsToMatchState()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -85,11 +85,22 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         UIGraphicsEndImageContext()
     }
     
-    // MARK: Notification Methods
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
         let userInfo = notification.userInfo
         let keyboardSize = userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue // of CGRect
         return keyboardSize.cgRectValue.height
+    }
+    
+    func imageContentModeTransition(toMode mode: UIView.ContentMode) {
+        UIView.transition(
+            with: imageView,
+            duration: 0.33,
+            options: .transitionCrossDissolve,
+            animations: {
+                self.imageView.contentMode = mode
+        },
+            completion: nil
+        )
     }
     
     // MARK: Notification
@@ -145,19 +156,24 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     // When the memeView is pinched, toggle between aspectfit and aspectfill for imageView's content mode
     @IBAction func adjustImageContentMode(_ sender: UIPinchGestureRecognizer) {
         if sender.state == .ended {
+            var newContentMode: UIView.ContentMode?
             if sender.scale < 1 {
                 // zoom out
-                imageView.contentMode = .scaleAspectFit
+                newContentMode = .scaleAspectFit
             } else if sender.scale > 1 {
                 // zoom in
-                imageView.contentMode = .scaleAspectFill
+                newContentMode = .scaleAspectFill
+            }
+            
+            if newContentMode != nil {
+                imageContentModeTransition(toMode: newContentMode!)
             }
         }
     }
     
     @IBAction func cancelMeme(_ sender: UIButton) {
         editorState = .WaitingForImage
-        updateSubViews()
+        updateViewsToMatchState()
     }
     
     @IBAction func saveMeme(_ sender: UIBarButtonItem) {
@@ -173,47 +189,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         
         present(activityView!, animated: true, completion: nil)
     }
-    
-    // MARK: Delegate Functions
-    // cancel imagePicker
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true, completion: nil)
-    }
-    
-    // image picked
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[.originalImage] as? UIImage {
-            memeModel = MemeModel(image: image)
-            editorState = .EditingImage
-            updateSubViews()
-        }
-        
-        // dismiss the picker modal view
-        picker.dismiss(animated: true, completion: nil)
-    }
-    
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        if textField.text == "TOP" || textField.text == "BOTTOM" {
-            textField.text = ""
-        }
-        
-        return true
-    }
-    
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        if textField.text == "" && topTextField.isFirstResponder {
-            textField.text = "TOP"
-        } else if textField.text == "" && bottomTextField.isFirstResponder {
-            textField.text = "BOTTOM"
-        }
-        
-        return true
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
 }
 
 // MARK: State Management
@@ -223,7 +198,7 @@ extension ViewController {
         case WaitingForImage
     }
     
-    func updateSubViews() {
+    func updateViewsToMatchState() {
         switch editorState {
         case .EditingImage:
             // Set memeView subview contents
@@ -261,3 +236,45 @@ extension ViewController {
     }
 }
 
+// MARK: Delegate Functions
+extension ViewController {
+    // cancel imagePicker
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    // image picked
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[.originalImage] as? UIImage {
+            memeModel = MemeModel(image: image)
+            editorState = .EditingImage
+            updateViewsToMatchState()
+        }
+        
+        // dismiss the picker modal view
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        if textField.text == "TOP" || textField.text == "BOTTOM" {
+            textField.text = ""
+        }
+        
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        if textField.text == "" && topTextField.isFirstResponder {
+            textField.text = "TOP"
+        } else if textField.text == "" && bottomTextField.isFirstResponder {
+            textField.text = "BOTTOM"
+        }
+        
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
