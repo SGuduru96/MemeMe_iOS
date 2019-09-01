@@ -18,7 +18,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     @IBOutlet weak var bottomTextField: UITextField!
     
     // Interface Buttons
-    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var cancelButton: UIBarButtonItem!
     @IBOutlet weak var pickItemBarButton: UIBarButtonItem!
     @IBOutlet weak var cameraItemBarButton: UIBarButtonItem!
     @IBOutlet weak var shareButton: UIBarButtonItem!
@@ -78,11 +78,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     // MARK: Methods
-    func saveMemedImage() {
+    func getMemedImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(memeView.bounds.size, false, 0)
         memeView.drawHierarchy(in: memeView.bounds, afterScreenUpdates: true)
-        memeModel.memedImage = UIGraphicsGetImageFromCurrentImageContext()
+        let memedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
+        
+        return memedImage
     }
     
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
@@ -101,6 +103,10 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         },
             completion: nil
         )
+    }
+    
+    func save(withMemedImage memedImage: UIImage) {
+        memeModel.memedImage = memedImage
     }
     
     // MARK: Notification
@@ -177,17 +183,31 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     @IBAction func saveMeme(_ sender: UIBarButtonItem) {
-        saveMemedImage()
-        
-        // open action sheet
-        var activityView: UIActivityViewController?
-        if photoTaken {
-            activityView = UIActivityViewController(activityItems: [memeModel.originalImage, memeModel.memedImage!], applicationActivities: nil)
-        } else {
-            activityView = UIActivityViewController(activityItems: [memeModel.memedImage!], applicationActivities: nil)
+        guard let memedImage = getMemedImage() else {
+            assert(false, "Failed to grab screenshot of memed image")
         }
         
-        present(activityView!, animated: true, completion: nil)
+        var activityView: UIActivityViewController
+        if photoTaken {
+            // if camera chosen, then save both unmemed and memed images
+            activityView = UIActivityViewController(activityItems: [memeModel.originalImage, memedImage], applicationActivities: nil)
+        } else {
+            // if album chosen, save only memed image
+            activityView = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)
+        }
+        
+        // Handle the activity view
+        activityView.completionWithItemsHandler = { (activityType: UIActivity.ActivityType?, success: Bool, returnedItems: [Any]?, error: Error?) -> Void in
+            if success {
+                self.save(withMemedImage: memedImage)
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                print("ActivityView cancelled")
+            }
+        }
+        
+        // open action sheet
+        present(activityView, animated: true, completion: nil)
     }
 }
 
@@ -212,9 +232,8 @@ extension ViewController {
             topTextField.isEnabled = true
             bottomTextField.isEnabled = true
             
-            // Enable and show the cancel button
+            // Enable cancel and share buttons
             cancelButton.isEnabled = true
-            cancelButton.isHidden = false
             shareButton.isEnabled = true
         case .WaitingForImage:
             // Set memeView subview contnts to nil
@@ -229,7 +248,6 @@ extension ViewController {
             bottomTextField.isEnabled = false
             
             // Hide the cancel button and share button and disable
-            cancelButton.isHidden = true
             cancelButton.isEnabled = false
             shareButton.isEnabled = false
         }
