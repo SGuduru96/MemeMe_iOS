@@ -157,11 +157,11 @@
             </objects>
             <point key="canvasLocation" x="3961" y="723"/>
         </scene>
-        <!--Item 1-->
+        <!--Navigation Controller-->
         <scene sceneID="p49-kb-4iL">
             <objects>
                 <navigationController id="qe0-mP-USZ" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item 1" id="JBp-6z-bl5"/>
+                    <tabBarItem key="tabBarItem" title="" image="table_icon" selectedImage="table_icon" id="JBp-6z-bl5"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="gRD-RD-gXQ">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -209,11 +209,11 @@
             </objects>
             <point key="canvasLocation" x="2632.8000000000002" y="-485.46798029556652"/>
         </scene>
-        <!--Item 2-->
+        <!--Navigation Controller-->
         <scene sceneID="cM2-Zt-89Y">
             <objects>
                 <navigationController id="coR-0R-07M" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item 2" id="2hh-hG-APD"/>
+                    <tabBarItem key="tabBarItem" title="" image="collection_icon" selectedImage="collection_icon" id="2hh-hG-APD"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9Sf-Dl-3Yy">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -305,6 +305,10 @@
             <point key="canvasLocation" x="466" y="-149"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="collection_icon" width="29.666666030883789" height="30"/>
+        <image name="table_icon" width="30" height="30"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="cvr-fz-BT0"/>
     </inferredMetricsTieBreakers>
