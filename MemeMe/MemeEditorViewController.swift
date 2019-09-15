@@ -8,9 +8,10 @@
 
 import UIKit
 
-class ViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate {
+class MemeEditorViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate {
     
     // MARK: Outlets
+    
     // Meme Views
     @IBOutlet weak var memeView: UIView!
     @IBOutlet weak var imageView: UIImageView!
@@ -25,10 +26,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     
     
     // MARK: Properties
+    
     var memeModel: MemeModel! = nil
-    var textFieldAttributes = [NSAttributedString.Key: Any]()
-    var photoTaken: Bool = false
-    var editorState: MemeEditorState = .WaitingForImage
+    var textFieldAttributes = [NSAttributedString.Key: Any]() // Contains all the text customizations
+    var photoTaken: Bool = false // True if a photo was taken during photo picker
+    var editorState: MemeEditorState = .WaitingForImage // State of editor
+    
+    // An enum to identify buttons based on their tag property in Interface Builder
     enum Buttons: Int {
         case Album
         case Camera
@@ -36,6 +40,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     // MARK: View Controller Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -78,6 +83,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     // MARK: Methods
+    
     func getMemedImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(memeView.bounds.size, false, 0)
         memeView.drawHierarchy(in: memeView.bounds, afterScreenUpdates: true)
@@ -107,9 +113,17 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     
     func save(withMemedImage memedImage: UIImage) {
         memeModel.memedImage = memedImage
+        memeModel.topText = topTextField.text
+        memeModel.bottomText = bottomTextField.text
+        
+        // Add to the memes array in the application delegate
+        let object = UIApplication.shared.delegate
+        let appDelegate = object as! AppDelegate
+        appDelegate.memes.append(memeModel)
     }
     
     // MARK: Notification
+    
     func subscribeToKeyboardNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -121,6 +135,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     // MARK: Callback
+    
     @objc func keyboardWillShow(_ notification: Notification) {
         // move frame up by keyboard height
         if bottomTextField.isFirstResponder {
@@ -136,6 +151,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     // MARK: Actions
+    
     @IBAction func pickAnImage(_ sender: UIBarButtonItem) {
         let imagePicker = UIImagePickerController()
         // set imagePicker properties
@@ -178,8 +194,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     }
     
     @IBAction func cancelMeme(_ sender: UIButton) {
-        editorState = .WaitingForImage
-        updateViewsToMatchState()
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func saveMeme(_ sender: UIBarButtonItem) {
@@ -212,7 +227,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
 }
 
 // MARK: State Management
-extension ViewController {
+
+extension MemeEditorViewController {
     enum MemeEditorState {
         case EditingImage
         case WaitingForImage
@@ -232,8 +248,7 @@ extension ViewController {
             topTextField.isEnabled = true
             bottomTextField.isEnabled = true
             
-            // Enable cancel and share buttons
-            cancelButton.isEnabled = true
+            // Enable share button
             shareButton.isEnabled = true
         case .WaitingForImage:
             // Set memeView subview contnts to nil
@@ -247,15 +262,16 @@ extension ViewController {
             topTextField.isEnabled = false
             bottomTextField.isEnabled = false
             
-            // Hide the cancel button and share button and disable
-            cancelButton.isEnabled = false
+            // Disable the share button
             shareButton.isEnabled = false
         }
     }
 }
 
 // MARK: Delegate Functions
-extension ViewController {
+
+extension MemeEditorViewController {
+    
     // cancel imagePicker
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)

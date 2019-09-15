@@ -9,11 +9,24 @@
 import Foundation
 import UIKit
 
-struct MemeModel {
+struct MemeModel: CustomStringConvertible {
     var topText: String?
     var bottomText: String?
     var originalImage: UIImage
     var memedImage: UIImage?
+    
+    // Custom String Convertable Porotocl Method
+    var description: String {
+        var text = ""
+        if topText != nil {
+            text += topText! + " "
+        }
+        if bottomText != nil {
+            text += bottomText! + " "
+        }
+
+        return text
+    }
     
     init(image: UIImage, topText: String? = nil, bottomText: String? = nil) {
         self.originalImage = image
